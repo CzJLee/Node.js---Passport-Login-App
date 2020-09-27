@@ -1,6 +1,8 @@
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 const mongoose = require("mongoose");
+const flash = require("connect-flash");
+const session = require("express-session");
 
 const indexRouter = require("./routes/index");
 const userRouter = require("./routes/users");
@@ -27,6 +29,26 @@ app.set("view engine", "ejs");
 
 // Form parser
 app.use(express.urlencoded({ extended: false }));
+
+// Add middleware for express session
+// Copied from https://github.com/expressjs/session#readme
+app.use(
+	session({
+		secret: "secret",
+		resave: true,
+		saveUninitialized: true,
+	})
+);
+
+// Add middleware for connect-flash
+app.use(flash());
+
+// Create global variables for colors
+app.use((req, res, next) => {
+	res.locals.success_msg = req.flash("success_msg");
+	res.locals.error_msg = req.flash("error_msg");
+	next();
+})
 
 // Routes
 app.use("/", indexRouter);
