@@ -25,6 +25,9 @@ const app = express();
 app.use(expressLayouts);
 app.set("view engine", "ejs");
 
+// Form parser
+app.use(express.urlencoded({ extended: false }));
+
 // Routes
 app.use("/", indexRouter);
 app.use("/users", userRouter);
