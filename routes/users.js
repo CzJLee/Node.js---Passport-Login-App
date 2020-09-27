@@ -1,5 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcryptjs");
+
+// Import mongoose user model
+const User = require("../models/User");
 
 // Login Page
 router.get("/login", (req, res, next) => {
@@ -14,8 +18,6 @@ router.get("/register", (req, res, next) => {
 // Register
 // Handle Registration Post Requests
 router.post("/register", (req, res, next) => {
-	console.log(req.body);
-
 	// Object destructuring to create variables from the object.
 	const { name, email, password, password2 } = req.body;
 
@@ -46,7 +48,53 @@ router.post("/register", (req, res, next) => {
 		// When using a render engine, we can pass in values
 		// Pass the values, and then pass the previously entered values so that the form does not clear
 	} else {
-		res.send("pass");
+		// Everything is correct, validation passes
+		// Use the mongoose model to insert a User
+		// Check that the user does not already exist
+		// This returns a promise.
+		User.findOne({ email: email }).then((user) => {
+			if (user) {
+				// This user already exists
+				// Re-render the register form, and send an error
+				errors.push({ message: "Email is already registered" });
+				res.render("register", {
+					errors,
+					name,
+					email,
+					password,
+					password2,
+				});
+			} else {
+				// User does not already exist
+				// Create a new user from User model
+				const newUser = new User({
+					name,
+					email,
+					password,
+				});
+
+				// Hash the password, salt length is 10.
+				bcrypt.hash(password, 10, (error, hash) => {
+					if (error) {
+						throw error;
+					}
+
+					// Update the newUser password with the hashed password
+					newUser.password = hash;
+
+					// Save the newUser in the DB
+					newUser
+						.save()
+						.then((user) => {
+							console.log(`Successfully added user ${email} to database.`)
+							// Flash a success_msg with the message "You are now registered"
+							req.flash("success_msg", "You are now registered and can log in")
+							res.redirect("/users/login");
+						})
+						.catch((error) => console.log(error));
+				});
+			}
+		});
 	}
 });
 
