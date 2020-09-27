@@ -1,0 +1,17 @@
+<!-- Check if errors exist -->
+<!-- Stuff inside the EJS tags are JS. -->
+<!-- 'Scriptlet' tag, for control-flow, no output -->
+<% if(typeof errors != "undefined") { %>
+	<!-- There exists an error -->
+	<% errors.forEach(function(error) { %>
+		<!-- Use Bootstrap dismissible alerts -->
+		<!-- https://getbootstrap.com/docs/4.5/components/alerts/#dismissing -->
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
+			<!-- Output the error message -->
+			<%= error.message %>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+	<% }) %>
+<% } %>
