@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
+const passport = require("passport");
 
 // Import mongoose user model
 const User = require("../models/User");
@@ -86,9 +87,14 @@ router.post("/register", (req, res, next) => {
 					newUser
 						.save()
 						.then((user) => {
-							console.log(`Successfully added user ${email} to database.`)
+							console.log(
+								`Successfully added user ${email} to database.`
+							);
 							// Flash a success_msg with the message "You are now registered"
-							req.flash("success_msg", "You are now registered and can log in")
+							req.flash(
+								"success_msg",
+								"You are now registered and can log in"
+							);
 							res.redirect("/users/login");
 						})
 						.catch((error) => console.log(error));
@@ -96,6 +102,17 @@ router.post("/register", (req, res, next) => {
 			}
 		});
 	}
+});
+
+// Login
+// Handle Login Post requests
+// http://www.passportjs.org/docs/authenticate/
+router.post("/login", (req, res, next) => {
+	passport.authenticate("local", {
+		successRedirect: "/dashboard",
+		failureRedirect: "/users/login",
+		failureFlash: true
+	})(req, res, next);
 });
 
 module.exports = router;
