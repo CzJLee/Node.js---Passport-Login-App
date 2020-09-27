@@ -15,3 +15,31 @@
 		</div>
 	<% }) %>
 <% } %>
+
+<!-- If the success message is not there, it will be an empty string -->
+<% if(success_msg != '') { %>
+	<!-- Send success message -->
+	<!-- Use Bootstrap dismissible alerts -->
+	<!-- https://getbootstrap.com/docs/4.5/components/alerts/#dismissing -->
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		<!-- Output the success message -->
+		<%= success_msg %>
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+<% } %>
+
+<!-- If the error message is not there, it will be an empty string -->
+<% if(error_msg != '') { %>
+	<!-- Send error message -->
+	<!-- Use Bootstrap dismissible alerts -->
+	<!-- https://getbootstrap.com/docs/4.5/components/alerts/#dismissing -->
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+		<!-- Output the error message -->
+		<%= error_msg %>
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+<% } %>
